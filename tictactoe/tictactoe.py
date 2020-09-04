@@ -72,8 +72,9 @@ def result(board, action):
     #if board[action[0]][action[1]]:
         #raise Exception('action not allowed')
     try:
-        board_copy[action[0]][action[1]] = player(board)
-        print(type(player(board)))
+        i = action[0]
+        j = action[1]
+        board_copy[i][j] = player(board)
     except IndexError:
          raise
 
@@ -135,18 +136,22 @@ def minvalue(board):
     if terminal(board):
         return utility(board)
     v = np.inf
+    
     for action in actions(board):
         v = min(v,maxvalue(result(board,action)))
-    return v 
+       
+    return v
 
 def maxvalue(board):
 
     if terminal(board):
         return utility(board)
     v = -np.inf
+    
     for action in actions(board):
         v = max(v,minvalue(result(board,action)))
-    return v        
+        
+    return v       
 
 def minimax(board):
     """
@@ -154,9 +159,23 @@ def minimax(board):
     """
     if terminal(board):
         return None
+
     if player(board) == 'X':
-        p = minvalue(board)
-        return p
+        move = set()
+        v_temp = -np.inf
+        for action in actions(board):
+            v = minvalue(board)
+            if v > v_temp:
+                v_temp = v
+                move = action
+        
     elif player(board) == 'O':
-        p = maxvalue(board)
-        return p
+        move = set()
+        v_temp = np.inf
+        for action in actions(board):
+            v = maxvalue(board)
+            if v < v_temp:
+                v_temp = v
+                move = action
+        
+    return move
